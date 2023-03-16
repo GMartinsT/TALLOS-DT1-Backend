@@ -5,7 +5,7 @@ import { UserModule } from "src/users/user.module";
 import { jwtConstants } from "./shared/constants/auth.constants";
 import { AuthController } from "./shared/controllers/auth.controller";
 import { AuthService } from "./shared/services/auth.service";
-import { LocalStrategy } from "./shared/strategies/auth.strategy";
+import { LocalStrategy } from "./shared/strategies/local.strategy";
 import { JwtStrategy } from "./shared/strategies/jwt.strategy";
 
 

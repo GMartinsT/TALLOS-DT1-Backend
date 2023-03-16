@@ -1,5 +1,5 @@
-import { IsNotEmpty } from "class-validator";
-import { IsEmail } from "class-validator/types/decorator/decorators";
+import { IsNotEmpty, IsEmail } from "class-validator";
+//import { IsEmail } from "class-validator/types/decorator/decorators";
 
 export class userDTO {
     id?: string;

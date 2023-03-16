@@ -23,12 +23,6 @@ export class AuthService {
             }
         }
         throw new Error("Dados incorretos");
-        
-        //if(user && user.password === password) {
-        //    const { _id, name, email, role } = user;
-        //    return { id: _id, name, email, role};
-        //}
-        //return null;
     }
 
     async login(user: any) {
