@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/users/services/user.service";
 import * as bcrypt from "bcryptjs"
+import { User } from "src/users/models/user.model";
+import { use } from "passport";
 
 @Injectable()
 export class AuthService {
@@ -17,15 +19,17 @@ export class AuthService {
         if(user) {
             const comparePassword = await bcrypt.compare(password, user.password)
             if(comparePassword) {
-                user.password = undefined
-
-                return {user}
+                return {
+                    ...user,
+                    password: undefined
+                }
             }
         }
         throw new Error("Dados incorretos");
     }
 
-    async login(user: any) {
+    async login(user: User) {
+        console.log(user)
         const payload = { email: user.email, _id: user._id}
         return {
             access_token: this.jwtService.sign(payload)

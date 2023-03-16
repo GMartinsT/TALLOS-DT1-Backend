@@ -19,7 +19,7 @@ export class UserController {
         return this.userService.getById(id);
     }
 
-    @Get(':email')
+    @Get('/email/:email')
     async getByEmail(@Param('email') email: string) : Promise<User> {
         return this.userService.getByEmail(email);
     }
