@@ -1,7 +1,7 @@
-import { IsNotEmpty } from "class-validator";
-import { IsEmail } from "class-validator/types/decorator/decorators";
+import { IsNotEmpty, IsEmail } from "class-validator";
+//import { IsEmail } from "class-validator/types/decorator/decorators";
 
-export class userDTO {
+export class CreateUserDto {
     id?: string;
 
     @IsNotEmpty({ message: 'Nome é obrigatório' })
