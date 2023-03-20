@@ -3,13 +3,14 @@ import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/users/services/user.service";
 import * as bcrypt from "bcryptjs"
 import { User } from "src/users/models/user.model";
-import { use } from "passport";
+import { UserPayload } from "../models/UserPayload";
+import { UserToken } from "../models/UserToken";
 
 @Injectable()
 export class AuthService {
     constructor(
-        private userService: UserService,
-        private jwtService: JwtService
+        private readonly userService: UserService,
+        private readonly jwtService: JwtService
     ) {}
 
 
@@ -28,11 +29,17 @@ export class AuthService {
         throw new Error("Dados incorretos");
     }
 
-    async login(user: User) {
-        console.log(user)
-        const payload = { email: user.email, _id: user._id}
+    login(user: User): UserToken {
+        const payload: UserPayload = {
+            email: user.email,
+            sub: user._id,
+            name: user.name
+        };
+
+        const jwtToken = this.jwtService.sign(payload);
+
         return {
-            access_token: this.jwtService.sign(payload)
+            access_token: jwtToken,
         }
     }
 }
