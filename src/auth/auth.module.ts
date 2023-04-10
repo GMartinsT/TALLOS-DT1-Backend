@@ -8,6 +8,7 @@ import { AuthService } from "./services/auth.service";
 import { LocalStrategy } from "./strategies/local.strategy";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LoginValidationMiddleware } from "./middlewares/login.validation.middleware";
+import { SocketGateway } from "src/sockets/socket.gateway";
 
 
 @Module({
@@ -23,7 +24,8 @@ import { LoginValidationMiddleware } from "./middlewares/login.validation.middle
     providers: [
         AuthService,
         LocalStrategy,
-        JwtStrategy
+        JwtStrategy,
+        SocketGateway
     ],
     exports: [
         AuthService
