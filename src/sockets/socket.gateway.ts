@@ -27,18 +27,18 @@ export class SocketGateway implements OnGatewayInit {
         })
     }
 
-    emitupdateUser(id: string) {
+    emitUpdateUser(id: string) {
         this.server.emit('update', id);
-        console.log('update back');
+        console.log('updated');
     }
 
     emitRemoveUser(id: string) {
         this.server.emit('removed-user', id);
         console.log('removed');
     }
-    emitnewUser(User: User) {
+    emitNewUser(User: User) {
         this.server.emit('new-user', User);
-        console.log(`created ${User}`);
+        console.log('created', User);
     }
     emitUserLogged(User: User) {
         this.server.emit('is-logged', User.email);

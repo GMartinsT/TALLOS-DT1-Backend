@@ -25,7 +25,7 @@ export class UserService {
     async create(user: User): Promise<UserModel> {
         user.password = await bcrypt.hash(user.password, 10)
         const createdUser = new this.userModel(user);
-        this.socketGateway.emitnewUser(user);
+        this.socketGateway.emitNewUser(user);
         return await createdUser.save();
     }
 
@@ -36,7 +36,7 @@ export class UserService {
             { new: true }
         )
 
-        this.socketGateway.emitupdateUser('id');
+        this.socketGateway.emitUpdateUser('id');
 
         return updatedUser
     }
