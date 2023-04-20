@@ -6,6 +6,7 @@ import { User } from "src/users/models/user.model";
 import { UserPayload } from "../models/UserPayload";
 import { UserToken } from "../models/UserToken";
 import { SocketGateway } from "src/sockets/socket.gateway";
+import { LoginRequestBody } from "../models/LoginRequestBody";
 
 @Injectable()
 export class AuthService {
@@ -15,16 +16,24 @@ export class AuthService {
         private readonly socketGateway: SocketGateway
     ) {}
     
-    login(user: User): UserToken {
-        const payload: UserPayload = {
+    async login(user: LoginRequestBody) {
+        const userData = await this.userService.getByEmail(user.email)
+        console.log("user.email", user.email)
+        console.log("logUser", user)
+        console.log("logUserData", userData)
+        const payload: LoginRequestBody = {
             email: user.email,
-            name: user.name,
-            role: user.role
+            password: user.password
         };
 
+        this.socketGateway.emitUserLogged(userData)
         const jwtToken = this.jwtService.sign(payload);
 
         return {
+            email: userData.email,
+            _id: userData._id,
+            name: userData.name,
+            role: userData.role,
             access_token: jwtToken,
         }
     }
