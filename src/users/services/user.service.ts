@@ -15,7 +15,6 @@ export class UserService {
     }
 
     async getByEmail(email: string) {
-        console.log('loggetemail', email)
         return await this.userModel.findOne({ email }).exec();
     }
 

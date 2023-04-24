@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsEmail, IsNotEmpty } from "class-validator";
+import { Role } from "src/auth/models/Role.enum";
 
 export interface UserModel {
     name: string;
     email:string;
-    password: string;
-    role?: string;
+    password?: string;
+    role?: Role;
 }
 
 export type UserDocument = User & Document;
@@ -25,7 +26,7 @@ export class User implements UserModel {
 
     @Prop({ required: true })
     @IsNotEmpty({ message: 'Preencha com o cargo do usuário.' })
-    role?: string;
+    role?: Role;
 
     constructor(User?: Partial<User>) {
         this.name = User?.name;
