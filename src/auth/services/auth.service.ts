@@ -16,25 +16,19 @@ export class AuthService {
         private readonly socketGateway: SocketGateway
     ) {}
     
-    async login(user: LoginRequestBody) {
-        const userData = await this.userService.getByEmail(user.email)
-        console.log("user.email", user.email)
-        console.log("logUser", user)
-        console.log("logUserData", userData)
-        const payload: LoginRequestBody = {
+    login(user: User) {
+        const payload: UserPayload = {
+            name: user.name,
             email: user.email,
-            password: user.password
+            role: user.role
         };
 
-        this.socketGateway.emitUserLogged(userData)
+        this.socketGateway.emitUserLogged(user)
         const jwtToken = this.jwtService.sign(payload);
 
         return {
-            email: userData.email,
-            _id: userData._id,
-            name: userData.name,
-            role: userData.role,
             access_token: jwtToken,
+            user
         }
     }
 
@@ -46,8 +40,10 @@ export class AuthService {
             if(comparePassword) {
                 this.socketGateway.emitUserLogged(user)
                 return {
-                    ...user,
-                    password: undefined
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    _id: user._id
                 }
             }
         }
