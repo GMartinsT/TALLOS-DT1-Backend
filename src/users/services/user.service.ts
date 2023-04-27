@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserModel } from "../models/user.model";
@@ -11,7 +11,7 @@ export class UserService {
     constructor(@InjectModel('User') private userModel: Model<User>, private socketGateway: SocketGateway) { }
 
     async getAll() {
-        return await this.userModel.find().exec();
+        return await this.userModel.find()
     }
 
     async getByEmail(email: string) {
@@ -23,11 +23,21 @@ export class UserService {
     }
 
     async create(user: User): Promise<UserModel> {
+        const userFound = await this.userModel.findOne({ email: user.email });
+        if (userFound) {
+
+        throw new BadRequestException('Usuario ja existe.');
+
+        }
         user.password = await bcrypt.hash(user.password, 10)
-        const createdUser = new this.userModel(user);
+
+        const userCreate = await this.userModel.create(user);
+
         this.socketGateway.emitNewUser(user);
-        return await createdUser.save();
+
+        return userCreate;
     }
+
 
     async update(id: string, user: User) {
         const updatedUser = await this.userModel.updateOne(
