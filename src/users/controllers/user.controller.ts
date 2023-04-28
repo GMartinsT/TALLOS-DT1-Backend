@@ -10,7 +10,7 @@ export class UserController {
 
     constructor(private userService: UserService) {}
 
-    //@Roles(Role.Admin, Role.User)
+    @Roles(Role.Admin, Role.User)
     @UseGuards(RolesGuard)
     @Get()
     async getAll() : Promise<User[]> {
