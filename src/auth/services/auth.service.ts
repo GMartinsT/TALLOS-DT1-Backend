@@ -4,9 +4,7 @@ import { UserService } from "src/users/services/user.service";
 import * as bcrypt from "bcryptjs"
 import { User } from "src/users/models/user.model";
 import { UserPayload } from "../models/UserPayload";
-import { UserToken } from "../models/UserToken";
 import { SocketGateway } from "src/sockets/socket.gateway";
-import { LoginRequestBody } from "../models/LoginRequestBody";
 
 @Injectable()
 export class AuthService {
