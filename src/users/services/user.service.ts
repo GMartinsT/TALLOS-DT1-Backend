@@ -1,18 +1,17 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { userDTO } from "../dtos/create.user.dto";
-import { User } from "../models/user.model";
+import { User, UserModel } from "../models/user.model";
 import * as bcrypt from 'bcryptjs';
-import { UpdateUserDto } from "../dtos/update.user.dto";
+import { SocketGateway } from "src/sockets/socket.gateway";
 
 @Injectable()
 export class UserService {
 
-    constructor(@InjectModel('User') private userModel: Model<User>) {}
+    constructor(@InjectModel('User') private userModel: Model<User>, private socketGateway: SocketGateway) { }
 
     async getAll() {
-        return await this.userModel.find().exec();
+        return await this.userModel.find()
     }
 
     async getByEmail(email: string) {
@@ -23,22 +22,37 @@ export class UserService {
         return await this.userModel.findById(id).exec();
     }
 
-    async create(user: userDTO) {
+    async create(user: User): Promise<UserModel> {
+        const userFound = await this.userModel.findOne({ email: user.email });
+        if (userFound) {
+
+        throw new BadRequestException('Usuario ja existe.');
+
+        }
         user.password = await bcrypt.hash(user.password, 10)
-        const createdUser = new this.userModel(user);
-        return await createdUser.save();
+
+        const userCreate = await this.userModel.create(user);
+
+        this.socketGateway.emitNewUser(user);
+
+        return userCreate;
     }
 
-    async update(id: string, user: UpdateUserDto) {
+
+    async update(id: string, user: User) {
         const updatedUser = await this.userModel.updateOne(
             { _id: id },
-            {$set: user},
-            {new: true}
-            )
+            { $set: user },
+            { new: true }
+        )
+
+        this.socketGateway.emitUpdateUser('id');
+
         return updatedUser
     }
 
     async delete(id: string) {
+        this.socketGateway.emitRemoveUser(id)
         return await this.userModel.deleteOne({ _id: id }).exec();
     }
 }
