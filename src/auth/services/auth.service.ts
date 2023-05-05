@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { UserService } from "src/users/services/user.service";
+import { UserService } from "../../users/services/user.service";
 import * as bcrypt from "bcryptjs"
-import { User } from "src/users/models/user.model";
+import { User } from "../../users/models/user.model";
 import { UserPayload } from "../models/UserPayload";
-import { SocketGateway } from "src/sockets/socket.gateway";
+import { SocketGateway } from "../../sockets/socket.gateway";
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
         private readonly socketGateway: SocketGateway
     ) {}
     
-    login(user: User) {
+    login(user: User): any {
         const payload: UserPayload = {
             name: user.name,
             email: user.email,

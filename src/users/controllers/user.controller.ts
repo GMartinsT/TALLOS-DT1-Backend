@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Put, Post, UseGuards } from "@nestjs/common";
 import { User } from "../models/user.model"
 import { UserService } from "../services/user.service";
-import { RolesGuard } from "src/auth/guards/role.guard";
-import { Roles } from "src/auth/decorators/roles.decorator";
-import { Role } from "src/auth/models/Role.enum";
+import { RolesGuard } from "../../auth/guards/role.guard";
+import { Roles } from "../../auth/decorators/roles.decorator";
+import { Role } from "../../auth/models/Role.enum";
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from "@nestjs/swagger";
 
 @ApiTags('users')
@@ -27,8 +27,8 @@ export class UserController {
         status: 404,
         description: 'Usuários não encontrados',
     })
-    //@Roles(Role.Admin, Role.User)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin, Role.User)
+    @UseGuards(RolesGuard)
     @Get()
     async getAll(): Promise<User[]> {
         return this.userService.getAll();
@@ -49,8 +49,8 @@ export class UserController {
         status: 404,
         description: 'Usuário não encontrado',
     })
-    //@Roles(Role.Admin, Role.User)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin, Role.User)
+    @UseGuards(RolesGuard)
     @Get(':id')
     async getById(@Param('id') id: string): Promise<User> {
         return this.userService.getById(id);
@@ -71,8 +71,8 @@ export class UserController {
         status: 404,
         description: 'Usuário não encontrado',
     })
-    //@Roles(Role.Admin, Role.User)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin, Role.User)
+    @UseGuards(RolesGuard)
     @Get('/email/:email')
     async getByEmail(@Param('email') email: string): Promise<User> {
         return this.userService.getByEmail(email);
@@ -97,8 +97,8 @@ export class UserController {
         status: 403,
         description: 'Não autorizado - O usuário não autorizado',
     })
-    //@Roles(Role.Admin)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
     @Post()
     async create(@Body() createUserDTO: User) {
         return this.userService.create(createUserDTO);
@@ -127,8 +127,8 @@ export class UserController {
         status: 404,
         description: 'Usuário não encontrado',
     })
-    //@Roles(Role.Admin)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
     @Put(':id')
     async update(@Param('id') id: string, @Body() updateUserDto: User) {
         return this.userService.update(id, updateUserDto);
@@ -152,8 +152,8 @@ export class UserController {
         status: 404,
         description: 'Usuário não encontrado',
     })
-    //@Roles(Role.Admin)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
     @Delete(':id')
     async delete(@Param('id') id: string) {
         this.userService.delete(id);

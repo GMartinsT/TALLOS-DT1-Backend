@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserModel } from "../models/user.model";
 import * as bcrypt from 'bcryptjs';
-import { SocketGateway } from "src/sockets/socket.gateway";
+import { SocketGateway } from "../../sockets/socket.gateway";
 
 @Injectable()
 export class UserService {

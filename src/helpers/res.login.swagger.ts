@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Role } from "src/auth/models/Role.enum";
-import { User } from "src/users/models/user.model";
+import { Role } from "../auth/models/Role.enum";
 
 export class LoginResponse {
     @ApiProperty({ description: 'Nome do usuário cadastrado.' })

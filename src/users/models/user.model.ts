@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsEmail, IsNotEmpty } from "class-validator";
-import { Role } from "src/auth/models/Role.enum";
+import { Role } from "../../auth/models/Role.enum";
 import { ApiProperty } from '@nestjs/swagger'
 
 export interface UserModel {
