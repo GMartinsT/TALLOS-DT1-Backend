@@ -48,7 +48,7 @@ export class UserService {
 
         this.socketGateway.emitUpdateUser('id');
 
-        return updatedUser
+        return {updatedUser, user}
     }
 
     async delete(id: string) {

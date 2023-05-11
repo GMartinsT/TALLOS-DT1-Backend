@@ -11,7 +11,8 @@ const loginRes: LoginResponse = {
     email: 'gmt@mail.com',
     name: 'Guilherme',
     password: '1234',
-    role: Role.Admin
+    role: Role.Admin,
+    _id: 'id123'
 }
 
 describe('TesteAuthController', () => {

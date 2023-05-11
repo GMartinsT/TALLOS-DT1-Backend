@@ -4,36 +4,49 @@ import { UserService } from '../services/user.service';
 import { UserController } from './user.controller'
 import { Role } from '../../auth/models/Role.enum';
 
+const upadateReturn = {
+  
+  updatedUser: {
+    acknowledged: true,
+    modifiedCount: 1,
+    upsertedId: null,
+    upsertedCount: 0,
+    matchedCount: 1
+  },
+  user: {
+    name: 'admin1',
+    email: 'admin1@mail.com',
+    password: '1234',
+    role: Role.Admin
+  }
+  
+}
+
 const UserList: User[] = [
   new User({
     name: 'Admin1',
     email: 'admin1@mail.com',
-    password: 'admin123',
     role: Role.Admin,
   }),
   new User({
     name: 'Admin2',
     email: 'admin2@mail.com',
-    password: 'admin123',
     role: Role.Admin,
   }),
   new User({
     name: 'User1',
     email: 'user1@mail.com',
-    password: 'user123',
     role: Role.User,
   }),
   new User({
     name: 'User2',
     email: 'user2@mail.com',
-    password: 'user123',
     role: Role.User,
   }),
 ];
 const user = new User({
-  name: 'Admin1',
-  email: 'admin@gmail.com',
-  password: 'admin123',
+  name: 'admin1',
+  email: 'admin1@mail.com',
   role: Role.Admin,
 });
 
@@ -51,7 +64,7 @@ describe('TesteController', () => {
             getById: jest.fn().mockResolvedValue(user),
             getByEmail: jest.fn().mockResolvedValue(user),
             create: jest.fn().mockResolvedValue(user),
-            update: jest.fn().mockResolvedValue(user),
+            update: jest.fn().mockResolvedValue(upadateReturn),
             delete: jest.fn().mockResolvedValue(true),
           },
         },
@@ -126,7 +139,7 @@ describe('TesteController', () => {
   describe('create', () => {
     it('deve retornar sucesso ao criar o usuário', async () => {
       const body = {
-        name: 'Admin1',
+        name: 'admin1',
         email: 'admin1@mail.com',
         password: 'admin123',
         role: Role.Admin,

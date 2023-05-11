@@ -24,9 +24,11 @@ export class AuthService {
         this.socketGateway.emitUserLogged(user)
         const jwtToken = this.jwtService.sign(payload);
 
+        const { password, ...result }= user;
+
         return {
             access_token: jwtToken,
-            user
+            ...result
         }
     }
 
