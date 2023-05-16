@@ -58,8 +58,12 @@ export class UserController {
     @Get(':id')
     async getById(@Param('id') id: string) {
         const user = await this.userService.getById(id);
-        const { password, ...result } = user;
-        return result;
+        const userData = {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        }
+        return userData;
     }
 
     @ApiOperation({ summary: 'Listar usuário buscando por e-mail' })
@@ -82,8 +86,12 @@ export class UserController {
     @Get('/email/:email')
     async getByEmail(@Param('email') email: string) {
         const user = await this.userService.getByEmail(email);
-        const { password, ...result } = user;
-        return result;
+        const userData = {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        }
+        return userData;
     }
 
     @ApiOperation({ summary: 'Registrar um novo usuário' })
@@ -110,8 +118,13 @@ export class UserController {
     @Post()
     async create(@Body() createUserDTO: User) {
         const user = await this.userService.create(createUserDTO);
-        const { password, ...result } = user;
-        return result;
+        //const { password, ...result } = user;
+        const userData = {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        }
+        return userData;
     }
 
     @ApiOperation({ summary: 'Atualizar um usuário' })
