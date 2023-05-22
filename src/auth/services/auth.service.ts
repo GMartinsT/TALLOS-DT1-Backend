@@ -16,7 +16,6 @@ export class AuthService {
     
     login(user: User): any {
         const payload: UserPayload = {
-            name: user.name,
             email: user.email,
             role: user.role
         };
@@ -24,8 +23,8 @@ export class AuthService {
         this.socketGateway.emitUserLogged(user)
         const jwtToken = this.jwtService.sign(payload);
 
-        const { password, ...result }= user;
-
+        const { password, ...result } = user;
+        this.socketGateway.emitUserLogged(user)
         return {
             access_token: jwtToken,
             ...result
@@ -34,11 +33,10 @@ export class AuthService {
 
     async validateUser(userEmail: string, password: string) {
         const user = await this.userService.getByEmail(userEmail);
-
         if(user) {
             const comparePassword = await bcrypt.compare(password, user.password)
             if(comparePassword) {
-                this.socketGateway.emitUserLogged(user)
+                
                 return {
                     name: user.name,
                     email: user.email,

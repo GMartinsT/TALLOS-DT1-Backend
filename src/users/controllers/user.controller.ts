@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Put, Post, UseGuards, Patch } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, UseGuards, Patch } from "@nestjs/common";
 import { User } from "../models/user.model"
 import { UserService } from "../services/user.service";
 import { RolesGuard } from "../../auth/guards/role.guard";
@@ -7,6 +7,7 @@ import { Role } from "../../auth/models/Role.enum";
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { LoginResponse } from "../../helpers/res.login.swagger";
 import { SwaggerResponse } from "../../helpers/res.swagger";
+import { UpdateUserDto } from "../models/user.update.dto";
 
 @ApiTags('users')
 @ApiBearerAuth('access-token')
@@ -153,7 +154,7 @@ export class UserController {
     @Roles(Role.Admin)
     @UseGuards(RolesGuard)
     @Patch(':id')
-    async update(@Param('id') id: string, @Body() updateUserDto: User) {
+    async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
         const { updatedUser, user } = await this.userService.update(id, updateUserDto);
         const { password, ...result } = user;
         return result;
