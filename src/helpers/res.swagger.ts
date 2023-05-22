@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Role } from "../auth/models/Role.enum";
-export class LoginResponse {
-    @ApiProperty({ description: 'Nome do usuário cadastrado.' })
-    access_token: string
+
+export class SwaggerResponse {
 
     @ApiProperty({
         example: 'Guilherme Martins',
@@ -15,8 +14,6 @@ export class LoginResponse {
         description: 'E-mail cadastrado para realizar login.'
     })
     email: string;
-    
-    password?: string;
 
     @ApiProperty({
         enum: ['Admin', 'User'],

@@ -3,7 +3,8 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserModel } from "../models/user.model";
 import * as bcrypt from 'bcryptjs';
-import { SocketGateway } from "src/sockets/socket.gateway";
+import { SocketGateway } from "../../sockets/socket.gateway";
+import { UpdateUserDto } from "../models/user.update.dto";
 
 @Injectable()
 export class UserService {
@@ -26,7 +27,7 @@ export class UserService {
         const userFound = await this.userModel.findOne({ email: user.email });
         if (userFound) {
 
-        throw new BadRequestException('Usuario ja existe.');
+            throw new BadRequestException('Usuario ja existe.');
 
         }
         user.password = await bcrypt.hash(user.password, 10)
@@ -39,16 +40,31 @@ export class UserService {
     }
 
 
-    async update(id: string, user: User) {
-        const updatedUser = await this.userModel.updateOne(
-            { _id: id },
-            { $set: user },
-            { new: true }
-        )
+    async update(id: string, user: UpdateUserDto) {
+        const existingUser = await this.userModel.findById(id).exec();
+        if (!existingUser) {
+            throw new BadRequestException('Usuário não encontrado');
+        }
 
-        this.socketGateway.emitUpdateUser('id');
+        // Atualizar apenas os campos necessários
+        if (user.name) {
+            existingUser.name = user.name;
+        }
+        if (user.email) {
+            existingUser.email = user.email;
+        }
+        if (user.password && user.password?.length > 0) {
+            existingUser.password = await bcrypt.hash(user.password, 10);
+        }
+        if (user.role) {
+            existingUser.role = user.role;
+        }
+        // Salvar as alterações no banco de dados
+        const updatedUser = await existingUser.save();
 
-        return updatedUser
+        this.socketGateway.emitUpdateUser(id);
+
+        return { updatedUser, user };
     }
 
     async delete(id: string) {

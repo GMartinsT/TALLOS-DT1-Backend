@@ -1,11 +1,11 @@
-import { Controller, UseGuards, Request, Post, HttpCode, HttpStatus, Body } from "@nestjs/common";
+import { Controller, UseGuards, Request, Post, HttpCode, HttpStatus } from "@nestjs/common";
 import { AuthService } from "../services/auth.service";
 import { LocalAuthGuard } from "../guards/local.auth.guard";
 import { AuthRequest } from "../models/AuthRequest";
 import { IsPublic } from "../decorators/is.public.decorator";
 import { ApiTags, ApiOperation, ApiBody, ApiResponse } from "@nestjs/swagger";
-import { LoginRequest } from "src/helpers/req.login.swagger";
-import { LoginResponse } from "src/helpers/res.login.swagger";
+import { LoginRequest } from "../../helpers/req.login.swagger";
+import { LoginResponse } from "../../helpers/res.login.swagger";
 
 @ApiTags('login')
 @Controller()
@@ -28,7 +28,6 @@ export class AuthController {
     @Post('auth/login')
     @HttpCode(HttpStatus.OK)
     async login(@Request() req: AuthRequest) {
-        //console.log("logReq", req)
         return this.authService.login(req.user)
     }
 }

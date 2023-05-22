@@ -1,12 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Put, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, UseGuards, Patch } from "@nestjs/common";
 import { User } from "../models/user.model"
 import { UserService } from "../services/user.service";
-import { RolesGuard } from "src/auth/guards/role.guard";
-import { Roles } from "src/auth/decorators/roles.decorator";
-import { Role } from "src/auth/models/Role.enum";
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from "@nestjs/swagger";
+import { RolesGuard } from "../../auth/guards/role.guard";
+import { Roles } from "../../auth/decorators/roles.decorator";
+import { Role } from "../../auth/models/Role.enum";
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
+import { LoginResponse } from "../../helpers/res.login.swagger";
+import { SwaggerResponse } from "../../helpers/res.swagger";
+import { UpdateUserDto } from "../models/user.update.dto";
 
 @ApiTags('users')
+@ApiBearerAuth('access-token')
 @Controller('users')
 export class UserController {
 
@@ -16,7 +20,7 @@ export class UserController {
     @ApiResponse({
         status: 200,
         description: 'Usuários retornados com sucesso',
-        type: User,
+        type: SwaggerResponse,
         isArray: true
     })
     @ApiResponse({
@@ -27,11 +31,12 @@ export class UserController {
         status: 404,
         description: 'Usuários não encontrados',
     })
-    //@Roles(Role.Admin, Role.User)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin, Role.User)
+    @UseGuards(RolesGuard)
     @Get()
-    async getAll(): Promise<User[]> {
-        return this.userService.getAll();
+    async getAll() {
+        const users = await this.userService.getAll();
+        return users.map(user => ({ email: user.email, name: user.name, role: user.role, _id: user._id }));
     }
 
     @ApiOperation({ summary: 'Listar usuário buscando por ID' })
@@ -39,7 +44,7 @@ export class UserController {
     @ApiResponse({
         status: 200,
         description: 'Usuário retornado com sucesso',
-        type: User
+        type: LoginResponse
     })
     @ApiResponse({
         status: 401,
@@ -49,11 +54,17 @@ export class UserController {
         status: 404,
         description: 'Usuário não encontrado',
     })
-    //@Roles(Role.Admin, Role.User)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin, Role.User)
+    @UseGuards(RolesGuard)
     @Get(':id')
-    async getById(@Param('id') id: string): Promise<User> {
-        return this.userService.getById(id);
+    async getById(@Param('id') id: string) {
+        const user = await this.userService.getById(id);
+        const userData = {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        }
+        return userData;
     }
 
     @ApiOperation({ summary: 'Listar usuário buscando por e-mail' })
@@ -71,11 +82,17 @@ export class UserController {
         status: 404,
         description: 'Usuário não encontrado',
     })
-    //@Roles(Role.Admin, Role.User)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin, Role.User)
+    @UseGuards(RolesGuard)
     @Get('/email/:email')
-    async getByEmail(@Param('email') email: string): Promise<User> {
-        return this.userService.getByEmail(email);
+    async getByEmail(@Param('email') email: string) {
+        const user = await this.userService.getByEmail(email);
+        const userData = {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        }
+        return userData;
     }
 
     @ApiOperation({ summary: 'Registrar um novo usuário' })
@@ -83,7 +100,7 @@ export class UserController {
     @ApiResponse({
         status: 201,
         description: 'Usuário registrado com sucesso',
-        type: User
+        type: SwaggerResponse
     })
     @ApiResponse({
         status: 400,
@@ -97,11 +114,18 @@ export class UserController {
         status: 403,
         description: 'Não autorizado - O usuário não autorizado',
     })
-    //@Roles(Role.Admin)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
     @Post()
     async create(@Body() createUserDTO: User) {
-        return this.userService.create(createUserDTO);
+        const user = await this.userService.create(createUserDTO);
+        //const { password, ...result } = user;
+        const userData = {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        }
+        return userData;
     }
 
     @ApiOperation({ summary: 'Atualizar um usuário' })
@@ -109,7 +133,7 @@ export class UserController {
     @ApiResponse({
         status: 200,
         description: 'Usuário atualizado com sucesso',
-        type: User
+        type: SwaggerResponse
     })
     @ApiResponse({
         status: 400,
@@ -127,11 +151,13 @@ export class UserController {
         status: 404,
         description: 'Usuário não encontrado',
     })
-    //@Roles(Role.Admin)
-    //@UseGuards(RolesGuard)
-    @Put(':id')
-    async update(@Param('id') id: string, @Body() updateUserDto: User) {
-        return this.userService.update(id, updateUserDto);
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @Patch(':id')
+    async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+        const { updatedUser, user } = await this.userService.update(id, updateUserDto);
+        const { password, ...result } = user;
+        return result;
     }
 
     @ApiOperation({ summary: 'Deletar um usuário' })
@@ -152,8 +178,8 @@ export class UserController {
         status: 404,
         description: 'Usuário não encontrado',
     })
-    //@Roles(Role.Admin)
-    //@UseGuards(RolesGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
     @Delete(':id')
     async delete(@Param('id') id: string) {
         this.userService.delete(id);
